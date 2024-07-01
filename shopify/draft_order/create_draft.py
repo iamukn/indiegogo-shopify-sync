@@ -9,6 +9,7 @@ from typing import List, Dict
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from shopify.customer.customer import BASE_URL, headers, create_customer, get_customer_id
 from shopify.product.products import get_variant_id
+from shopify.draft_order.send_an_invoice import send_invoice
 from database.db_connect import User, session
 
 """ creating a draft order """
@@ -83,7 +84,6 @@ def create_draft(order: List, email:str) -> Dict:
             # creates a new customer if the customer doesn't exist
             customer_data = {
                 "name": shipping_data.get('name', ''),
-                "phone_number": shipping_data.get('phone_number', ''),
                 "address": shipping_data.get('address', ''),
                 "city": shipping_data.get('city', ''),
                 "province": shipping_data.get('state', ''),
@@ -91,6 +91,7 @@ def create_draft(order: List, email:str) -> Dict:
                 "country": shipping_data.get('country'),
                     }
             try:
+                
                 new_customer = create_customer(customer_data=customer_data,email=email)
                 new_id = new_customer.get('customer').get('id')
                 payload['draft_order']['customer'] = {
@@ -102,16 +103,21 @@ def create_draft(order: List, email:str) -> Dict:
 
         # create the draft order
         res = requests.post(url, json=payload, headers=headers)
-        if res.status_code == 201:
+
+        if res.status_code == 202 or res.status_code == 201:
 
             # update the database with the email and contribution id
 
+            draft_info = res.json()['draft_order']
+            draft_info = {'draft_id': draft_info.get('id'), 'draft_name': draft_info.get('name'), 'draft_email': draft_info.get('email')}
+            
+            # Send an invoice to the customer
+            send_email = send_invoice(draft_order_id=draft_info.get('draft_id'), draft_name=draft_info.get('draft_name'), to=draft_info.get('draft_email'))
+            # update the database with the email and contribution id
             new_user_data = User(email=email, contribution_id=order.get('sequence_number'))
             session.add(new_user_data)
             session.commit()
-
-            draft = res.json()['draft_order']
-            return {'draft_id': draft.get('id'), 'draft_name': draft.get('name'), 'draft_email': draft.get('email')}
-       
+            return "Sent"
+    
     except Exception as e:
         print(e)

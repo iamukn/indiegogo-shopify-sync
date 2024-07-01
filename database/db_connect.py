@@ -6,7 +6,7 @@ import os
 
 # Database connection
 PASSWORD = os.environ.get('password')
-DATABASE_URL = "postgresql+psycopg2://eyen:PASSWORD@localhost:5432/mydb"
+DATABASE_URL = f"postgresql+psycopg2://eyen:{PASSWORD}@localhost:5432/mydb"
 engine = create_engine(DATABASE_URL)
 
 # Define the base

@@ -44,9 +44,7 @@ def get_contributions(campaign_id:str, page):
             
                         order = res.get('order')
                         # create a draft order
-                        draft = create_draft(order=order, email=email)
-                        print(draft)
-                        return
+                        make_draft = create_draft(order=order, email=email)
                         
                         
                 except Exception:
