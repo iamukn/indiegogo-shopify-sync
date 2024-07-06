@@ -29,12 +29,12 @@ def fetch_contribution(campaign_id, page):
         res = req.json()['response']
         # loop through the response data and append to the list
         for response in res:
-            if ("INDIE DROP" not in response['order']['perks'][0]['label'].upper()):
+
+            if ("INDIE" not in response['order']['perks'][0]['label'].upper()):
                 pass
             perks.append(response)
         
         if next_page == None:
-
             return perks
         # recursive call to the fetch contribution function
         fetch_contribution(campaign_id=campaign_id, page=next_page)

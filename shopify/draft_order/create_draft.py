@@ -1,8 +1,10 @@
 #!/usr/bin/python3
 import requests
 import sys
+import traceback
 from pprint import pprint
 import os
+import time
 from typing import List, Dict
 
 # Add shopify directory to path
@@ -29,6 +31,10 @@ def create_draft(order: List, email:str) -> Dict:
             for item in perk.get('items'):
                 perk_item = item
                 perk_name = perk_item.get('name')
+                perk_name
+                perk_name = '140W' if '140W' in perk_name.upper() else perk_name
+                print(perk_name)
+                return
                 perk_quantity = perk_item.get('quantity')
                 variant_id =  get_variant_id(name=perk_name).get('variant')
                 order_data = {
@@ -44,11 +50,11 @@ def create_draft(order: List, email:str) -> Dict:
                     }
                 payload.get('draft_order').get('line_items').append(order_data)
         payload['draft_order']['note'] = 'Contribution %(id)s' %{'id': order.get('sequence_number')}
-
             
         # shipping address
         shipping_data = order.get('shipping')
         name = shipping_data.get('name').split(' ')
+        
         shipping_address = {
             "first_name": name[0],
             "last_name": '' if len(name) == 1 else name[1],
@@ -67,6 +73,7 @@ def create_draft(order: List, email:str) -> Dict:
                 }
 
         tags = "draft"
+        
         
         # add to draft order payloads
         payload['draft_order']['shipping_line'] = shipping_line
@@ -97,6 +104,7 @@ def create_draft(order: List, email:str) -> Dict:
                 payload['draft_order']['customer'] = {
                         "id": new_id,
                         }
+                print(f'New customer created with id f{new_id}')
             except Exception as e:
                 print(e)
                 return "Error creating a new customer"
@@ -110,7 +118,9 @@ def create_draft(order: List, email:str) -> Dict:
 
             draft_info = res.json()['draft_order']
             draft_info = {'draft_id': draft_info.get('id'), 'draft_name': draft_info.get('name'), 'draft_email': draft_info.get('email')}
+            print(f"draft order created for {draft_info.get('draft_email')} with number {draft_info.get('draft_name')}")
             
+            time.sleep(5)
             # Send an invoice to the customer
             send_email = send_invoice(draft_order_id=draft_info.get('draft_id'), draft_name=draft_info.get('draft_name'), to=draft_info.get('draft_email'))
             # update the database with the email and contribution id
@@ -121,3 +131,4 @@ def create_draft(order: List, email:str) -> Dict:
     
     except Exception as e:
         print(e)
+        traceback.print_exc()

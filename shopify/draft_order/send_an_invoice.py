@@ -3,7 +3,7 @@ import requests
 import sys
 from pprint import pprint
 import os
-
+import time
 # Add shopify directory to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from shopify.customer.customer import BASE_URL, headers
@@ -25,6 +25,10 @@ def send_invoice(draft_order_id:int, draft_name:str, to:str) -> dict or str:
         }
     try:
         res = requests.post(url, headers=headers, json=data)
+        print(f"invoice successfully sent to {to}")
+        
+        # wait 3 seconds before creating another order and sending email
+        time.sleep(3)
         return res.json()
     except Exception as e:
         return "an error occured while trying to send an invoice"
