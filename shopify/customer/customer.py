@@ -55,7 +55,9 @@ def get_customer_id(email:str=None):
         res = get(BASE_URL + url, params=params,headers=headers)
         if len(res.json().get('customers')) < 1:
             return {'status':404, 'details': 'NOT FOUND'}
-        id = {'status': 200, 'details': 'FOUND', 'customer_id':res.json().get('customers')[0].get('id'), 'email': email}
+        res = res.json()
+        id = {'status': 200, 'details': 'FOUND', 'customer_id':res.get('customers')[0].get('id'), 'email': email}
+
         return id
     except Exception as e:
         print(e)

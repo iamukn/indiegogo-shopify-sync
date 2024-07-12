@@ -46,8 +46,7 @@ def get_contributions(campaign_id:str, page):
                         count += 1
 
                         time.sleep(2)
-                        
-                        
+                               
                 except Exception:
                     return "Database error"
             else:
@@ -58,4 +57,17 @@ def get_contributions(campaign_id:str, page):
         print('except block')
         return "Server Error"
 
-get_contributions(campaign_id=2856437, page=1)
+
+campaign_id= {
+        "VOLTAGO": 2863364,
+        "TRAVELGO": 2856437
+        }
+
+
+campaign = input('Enter the campaign product name: e.g TravelGo: ')
+if campaign.upper() in campaign_id:
+    campaign_id = campaign_id.get(campaign.upper())
+    print(f'Synchronizing perks for {campaign}! Please wait')
+    get_contributions(campaign_id=campaign_id, page=1)
+else:
+    print('Could not find {} campaign!'.format(campaign))
