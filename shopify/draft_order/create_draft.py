@@ -33,8 +33,6 @@ def create_draft(order: List, email:str) -> Dict:
                 perk_name = perk_item.get('name')
                 perk_name
                 perk_name = '140W' if '140W' in perk_name.upper() else perk_name
-                print(perk_name)
-                return
                 perk_quantity = perk_item.get('quantity')
                 variant_id =  get_variant_id(name=perk_name).get('variant')
                 order_data = {
