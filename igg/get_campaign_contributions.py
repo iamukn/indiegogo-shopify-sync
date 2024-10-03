@@ -25,12 +25,14 @@ def get_contributions(campaign_id:str, page):
         response = req
         # loops through all the responses to get the data
         for res in response:    
-            if ("INDIE" not in res['order']['perks'][0]['label'].upper()):
+            if res is None or res['order'] is None or res['order']['perks'][0]['label'] is None:
                 continue
-           
+            elif ("INDIE" not in res['order']['perks'][0]['label'].upper()):
+                continue
             contribution_id = res['order']['sequence_number']
             status = res['order']['status']
             email = res['email']
+        
             # checks if this  contribution is already synced
             query = session.query(User).filter(User.email==email).filter(User.contribution_id==contribution_id).count()
             # syncs the contribution if it's not synced
