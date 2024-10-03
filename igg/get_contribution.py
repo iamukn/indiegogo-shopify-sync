@@ -30,8 +30,8 @@ def fetch_contribution(campaign_id, page):
         # loop through the response data and append to the list
         for response in res:
 
-            if ("INDIE" not in response['order']['perks'][0]['label'].upper()):
-                pass
+        #    if ("INDIE" not in response['order']['perks'][0]['label'].upper()):
+        #        pass
             perks.append(response)
         
         if next_page == None:
