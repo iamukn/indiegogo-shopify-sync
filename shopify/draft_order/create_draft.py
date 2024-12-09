@@ -31,10 +31,12 @@ def create_draft(order: List, email:str) -> Dict:
             for item in perk.get('items'):
                 perk_item = item
                 perk_name = perk_item.get('name')
-                perk_name
-                perk_name = '140W' if '140W' in perk_name.upper() else ('200W' if '200W' in perk_name.upper() else perk_name)
+                perk_name = '140W' if '140W' in perk_name.upper() else ('200W' if '200W' in perk_name.upper() else (perk_name))
                 perk_quantity = perk_item.get('quantity')
-                variant_id =  get_variant_id(name=perk_name).get('variant')
+                if 'VOLTAGO' in perk_name.upper():
+                    variant_id = 48696106811704
+                else:
+                    variant_id =  get_variant_id(name=perk_name).get('variant')
                 order_data = {
                     "variant_id": variant_id,
                     "quantity": perk_quantity,
@@ -113,7 +115,7 @@ def create_draft(order: List, email:str) -> Dict:
         if res.status_code == 202 or res.status_code == 201:
 
             # update the database with the email and contribution id
-
+            
             draft_info = res.json()['draft_order']
             draft_info = {'draft_id': draft_info.get('id'), 'draft_name': draft_info.get('name'), 'draft_email': draft_info.get('email')}
             print(f"draft order created for {draft_info.get('draft_email')} with number {draft_info.get('draft_name')}")
@@ -126,6 +128,7 @@ def create_draft(order: List, email:str) -> Dict:
             session.add(new_user_data)
             session.commit()
             return "Sent"
+        print(res.status_code)
     
     except Exception as e:
         print(e)

@@ -9,10 +9,12 @@ from typing import List
 
 """ Fetch products variant """
 
+
 def get_all_variants():
     url = BASE_URL + "/admin/api/2024-04/products.json"
     res = requests.get(url, headers=headers)
     products = res.json().get('products', [])
+    
 
 
     result = []
@@ -21,6 +23,7 @@ def get_all_variants():
         return "No products available on this account"
 
     for product in products:
+
         if not product.get('variants')[0].get('sku'):
             pass
         if len(product.get('variants')) == 1:
@@ -37,7 +40,7 @@ def get_all_variants():
                         "title": product.get('title'),
                         "sku": variant.get('sku'),
                         "variant": variant.get('id')
-                     }
+                     } 
                 result.append(info)
     return result if all(result) else "error occurred"
 
