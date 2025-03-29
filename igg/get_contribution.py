@@ -21,6 +21,7 @@ def fetch_contribution(campaign_id, page):
     try:
         # query the url to fetch contributions
         req = get(url, params=params, headers=headers)
+
         # set next page
         next_page = req.json().get('pagination').get('next')
 

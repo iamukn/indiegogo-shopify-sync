@@ -17,4 +17,4 @@ def get_campaign_owner(campaign_id:str):
         return res.json()
     except Exception:
         return "Cannot get owners information"
-get_campaign_owner('2676466')
+#get_campaign_owner('2676466')
